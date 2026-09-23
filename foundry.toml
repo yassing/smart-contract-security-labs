@@ -1,0 +1,40 @@
+[profile.default]
+src = "labs"
+test = "labs"
+out = "out"
+libs = []
+solc_version = "0.8.24"
+auto_detect_solc = false
+optimizer = true
+optimizer_runs = 200
+ffi = false
+# The bug-finding invariant is expected to fail; it runs only under the find-bug profile.
+no_match_contract = "BuggyInvariant"
+
+[profile.default.fuzz]
+runs = 256
+
+[profile.default.invariant]
+runs = 128
+depth = 64
+fail_on_revert = false
+
+# FOUNDRY_PROFILE=find-bug forge test
+# Expected result: 1 failing invariant with a shrunk counterexample sequence.
+[profile.find-bug]
+src = "labs"
+test = "labs"
+out = "out"
+libs = []
+solc_version = "0.8.24"
+auto_detect_solc = false
+optimizer = true
+optimizer_runs = 200
+ffi = false
+match_contract = "BuggyInvariant"
+no_match_contract = "NoContractIsNamedThis"
+
+[profile.find-bug.invariant]
+runs = 64
+depth = 32
+fail_on_revert = false

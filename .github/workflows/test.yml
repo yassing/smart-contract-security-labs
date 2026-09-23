@@ -1,0 +1,37 @@
+name: Synthetic labs and publication guard
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  local-labs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout approved public repository only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install pinned Foundry
+        uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09
+        with:
+          version: v1.8.3
+          cache: false
+      - name: Check formatting
+        run: forge fmt --check
+      - name: Run all local deterministic, fuzz and invariant tests
+        run: forge test -vv
+      - name: Confirm the invariant campaign finds the vault bug (expected failure)
+        run: |
+          if FOUNDRY_PROFILE=find-bug forge test > "$RUNNER_TEMP/find-bug.log" 2>&1; then
+            cat "$RUNNER_TEMP/find-bug.log"; echo "Expected the buggy-vault invariant to fail"; exit 1
+          fi
+          cat "$RUNNER_TEMP/find-bug.log"
+          grep -q "credit sum mismatch" "$RUNNER_TEMP/find-bug.log"
+      - name: Scan publication candidate
+        run: python3 tools/publication_check.py --root .

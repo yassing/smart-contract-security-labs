@@ -1,0 +1,16 @@
+[
+  {
+    "path": ".github/workflows/test.yml",
+    "pattern": "commit_hash",
+    "match": "11d5960a326750d5838078e36cf38b85af677262",
+    "line": "        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+    "rationale": "Pinned commit of the public actions/checkout v4 action, to prevent tag drift."
+  },
+  {
+    "path": ".github/workflows/test.yml",
+    "pattern": "commit_hash",
+    "match": "908c540300062bd5a7e473851cdb4282204cee09",
+    "line": "        uses: foundry-rs/foundry-toolchain@908c540300062bd5a7e473851cdb4282204cee09",
+    "rationale": "Pinned commit of the public foundry-toolchain action, to prevent tag drift."
+  }
+]
